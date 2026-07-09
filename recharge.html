@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ProofAI 充值与订单</title>
+    <link rel="stylesheet" href="./commerce.css" />
+  </head>
+  <body data-page="recharge">
+    <header class="appbar">
+      <a class="brand" href="./index.html">
+        <span>ProofAI 信证 AI</span>
+        <strong>充值与订单</strong>
+      </a>
+      <nav class="nav" aria-label="主导航">
+        <a href="./index.html">证据包工具</a>
+        <a href="./services.html">服务中心</a>
+        <a class="active" href="./recharge.html">充值/订单</a>
+        <a href="./admin.html">管理后台</a>
+        <span id="currentUserName" style="font-weight:800;color:var(--teal);padding:8px 4px;"></span>
+        <span id="authModeLabel" style="display:none;font-size:11px;color:var(--coral);padding:8px 0;"></span>
+        <button class="btn ghost small" onclick="window.ProofAuth&&window.ProofAuth.logout()" type="button">退出</button>
+      </nav>
+    </header>
+
+    <main class="page">
+      <section class="summary-grid">
+        <div class="panel intro">
+          <p class="kicker">Recharge</p>
+          <h1>充值、赠送余额、订单和发票信息</h1>
+          <p class="note">当前页面用于演示商业闭环：选择金额、支付方式、优惠码、发票抬头，确认后模拟入账。真实上线时可接微信支付、支付宝、企业转账或人工审核。</p>
+        </div>
+        <div class="stat"><strong id="balanceText">¥0</strong><span>账户可用余额</span></div>
+        <div class="stat"><strong id="cashBalanceText">¥0</strong><span>现金余额</span></div>
+        <div class="stat"><strong id="bonusBalanceText">¥0</strong><span>赠送余额</span></div>
+      </section>
+
+      <section class="layout-two">
+        <div class="side-stack">
+          <section class="panel">
+            <div class="section-head">
+              <div>
+                <p class="kicker">Amount</p>
+                <h2>选择充值金额</h2>
+              </div>
+            </div>
+            <div class="amount-grid" id="amountOptions"></div>
+            <div class="form-grid" style="margin-top: 12px">
+              <label>
+                自定义金额
+                <input id="customAmount" type="number" min="1" step="1" placeholder="输入其他金额" />
+              </label>
+              <label>
+                优惠码
+                <input id="coupon" placeholder="可试用 PROOFAI100" />
+              </label>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="section-head">
+              <div>
+                <p class="kicker">Payment</p>
+                <h2>支付方式</h2>
+              </div>
+            </div>
+            <div class="payment-methods" id="paymentMethods">
+              <button class="method-option active" data-method="微信支付" type="button"><strong>微信支付</strong><span>线上收款</span></button>
+              <button class="method-option" data-method="支付宝" type="button"><strong>支付宝</strong><span>线上收款</span></button>
+              <button class="method-option" data-method="企业转账" type="button"><strong>企业转账</strong><span>人工确认</span></button>
+              <button class="method-option" data-method="线下收款" type="button"><strong>线下收款</strong><span>首单演示</span></button>
+            </div>
+          </section>
+
+          <section class="panel">
+            <div class="section-head">
+              <div>
+                <p class="kicker">Invoice</p>
+                <h2>发票信息</h2>
+              </div>
+            </div>
+            <form id="invoiceForm" class="form-grid">
+              <label>
+                发票类型
+                <select name="type">
+                  <option>增值税普通发票</option>
+                  <option>增值税专用发票</option>
+                  <option>暂不开票</option>
+                </select>
+              </label>
+              <label>
+                接收邮箱
+                <input name="email" placeholder="finance@example.com" />
+              </label>
+              <label>
+                发票抬头
+                <input name="title" placeholder="公司名称或个人姓名" />
+              </label>
+              <label>
+                税号
+                <input name="taxNo" placeholder="企业税号" />
+              </label>
+            </form>
+          </section>
+        </div>
+
+        <aside class="side-stack">
+          <section class="panel">
+            <div class="section-head">
+              <div>
+                <p class="kicker">Summary</p>
+                <h2>充值确认</h2>
+              </div>
+            </div>
+            <div class="order-summary">
+              <div class="line"><span>充值金额</span><strong id="summaryAmount">¥0</strong></div>
+              <div class="line"><span>赠送/优惠</span><strong id="summaryBonus">¥0</strong></div>
+              <div class="line"><span>到账合计</span><strong id="summaryTotal">¥0</strong></div>
+            </div>
+            <div class="action-row" style="margin-top: 12px">
+              <button class="btn primary" id="confirmRecharge" type="button">确认付款并入账</button>
+              <button class="btn danger" id="clearDemoLedger" type="button">清空演示账本</button>
+            </div>
+            <p class="note" style="margin-top: 12px">演示版点击即入账；上线版应等待支付渠道回调或财务确认后再入账。</p>
+          </section>
+
+          <section class="panel">
+            <div class="section-head">
+              <div>
+                <p class="kicker">Stats</p>
+                <h2>账户概览</h2>
+              </div>
+            </div>
+            <div class="line"><span>充值记录</span><strong id="rechargeCountText">0</strong></div>
+            <div class="line"><span>服务订单</span><strong id="orderCountText">0</strong></div>
+            <a class="btn secondary" href="./services.html" style="margin-top: 12px">去购买服务</a>
+          </section>
+        </aside>
+      </section>
+
+      <section class="panel">
+        <div class="section-head">
+          <div>
+            <p class="kicker">Ledger</p>
+            <h2>充值记录</h2>
+          </div>
+          <button class="btn secondary small" id="exportRecharges" type="button">导出充值记录</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>充值单号</th>
+                <th>支付方式</th>
+                <th>金额</th>
+                <th>赠送</th>
+                <th>状态</th>
+                <th>发票抬头</th>
+              </tr>
+            </thead>
+            <tbody id="rechargeRows"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <div class="dialog-backdrop" id="wechatPayDialog">
+      <section class="dialog" role="dialog" aria-modal="true" aria-labelledby="wechatPayTitle">
+        <header>
+          <h2 id="wechatPayTitle">微信支付</h2>
+          <button class="btn ghost small" id="closeWechatPay" type="button">关闭</button>
+        </header>
+        <div class="dialog-body">
+          <div class="order-summary">
+            <div class="line"><span>支付单号</span><strong id="wechatPayOrderNo">-</strong></div>
+            <div class="line"><span>支付金额</span><strong id="wechatPayAmount">¥0</strong></div>
+            <div class="line"><span>支付模式</span><strong id="wechatPayMode">演示</strong></div>
+          </div>
+          <div id="wechatQrBox" class="qr-box">
+            <canvas id="wechatQrCanvas" width="220" height="220"></canvas>
+            <p class="note">请使用微信扫码支付。演示模式不会产生真实扣款。</p>
+          </div>
+          <label>
+            支付链接
+            <input id="wechatPayCodeUrl" readonly />
+          </label>
+        </div>
+        <footer>
+          <button class="btn ghost" id="queryWechatPay" type="button">查询支付状态</button>
+          <button class="btn primary" id="mockWechatPaid" type="button">演示确认已支付</button>
+        </footer>
+      </section>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <script src="./auth-guard.js"></script>
+    <script src="./commerce.js"></script>
+  </body>
+</html>
