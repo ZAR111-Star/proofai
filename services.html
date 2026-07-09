@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ProofAI 服务中心</title>
+    <link rel="stylesheet" href="./commerce.css" />
+  </head>
+  <body data-page="services">
+    <header class="appbar">
+      <a class="brand" href="./index.html">
+        <span>ProofAI 信证 AI</span>
+        <strong>服务中心</strong>
+      </a>
+      <nav class="nav" aria-label="主导航">
+        <a href="./index.html">证据包工具</a>
+        <a class="active" href="./services.html">服务中心</a>
+        <a href="./recharge.html">充值/订单</a>
+        <a href="./admin.html">管理后台</a>
+        <span id="currentUserName" style="font-weight:800;color:var(--teal);padding:8px 4px;"></span>
+        <span id="authModeLabel" style="display:none;font-size:11px;color:var(--coral);padding:8px 0;"></span>
+        <button class="btn ghost small" onclick="window.ProofAuth&&window.ProofAuth.logout()" type="button">退出</button>
+      </nav>
+    </header>
+
+    <main class="page">
+      <section class="summary-grid">
+        <div class="panel intro">
+          <p class="kicker">Service Desk</p>
+          <h1>把证据包变成可售卖服务</h1>
+          <p class="note">客户可以购买标准证据包、深度核验、哈希上链存证、律师审核和企业试点服务。当前为本地演示闭环，订单和余额保存在浏览器本地。</p>
+        </div>
+        <div class="stat"><strong id="balanceText">¥0</strong><span>账户可用余额</span></div>
+        <div class="stat"><strong id="orderCountText">0</strong><span>服务订单</span></div>
+        <div class="stat"><strong>6</strong><span>可售服务</span></div>
+      </section>
+
+      <section class="layout-two">
+        <div class="panel">
+          <div class="section-head">
+            <div>
+              <p class="kicker">Catalog</p>
+              <h2>服务商品</h2>
+            </div>
+            <div class="filter-row" id="serviceFilters"></div>
+          </div>
+          <div class="service-grid" id="serviceGrid"></div>
+        </div>
+
+        <aside class="side-stack">
+          <section class="panel wallet-box">
+            <p class="kicker">Wallet</p>
+            <div class="amount" id="cashBalanceText">¥0</div>
+            <p class="sub">现金余额</p>
+            <div class="line"><span>赠送余额</span><strong id="bonusBalanceText">¥0</strong></div>
+            <a class="btn secondary" href="./recharge.html">去充值</a>
+          </section>
+
+          <section class="panel">
+            <div class="section-head">
+              <div>
+                <p class="kicker">Custom</p>
+                <h2>定制需求</h2>
+              </div>
+            </div>
+            <form id="customServiceForm" class="form-grid">
+              <label>
+                需求类型
+                <select name="needType">
+                  <option>企业试点</option>
+                  <option>批量证据包</option>
+                  <option>律师审核</option>
+                  <option>链上存证</option>
+                  <option>API 接入</option>
+                </select>
+              </label>
+              <label>
+                联系方式
+                <input name="contact" placeholder="微信/手机号" />
+              </label>
+              <label class="span-two">
+                项目说明
+                <textarea name="requirement" placeholder="例如：每月 200 份 AIGC 投流素材，需要批量生成证据包和验真链接。"></textarea>
+              </label>
+              <button class="btn primary span-two" type="submit">提交定制需求</button>
+            </form>
+          </section>
+        </aside>
+      </section>
+
+      <section class="panel">
+        <div class="section-head">
+          <div>
+            <p class="kicker">Orders</p>
+            <h2>服务订单记录</h2>
+          </div>
+          <button class="btn secondary small" id="exportOrders" type="button">导出订单</button>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>订单号</th>
+                <th>服务内容</th>
+                <th>金额</th>
+                <th>状态</th>
+                <th>联系方式</th>
+              </tr>
+            </thead>
+            <tbody id="serviceOrderRows"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <div class="dialog-backdrop" id="purchaseDialog">
+      <section class="dialog" role="dialog" aria-modal="true" aria-labelledby="purchaseTitle">
+        <header>
+          <h2 id="purchaseTitle">购买服务</h2>
+          <button class="btn ghost small" id="closePurchaseDialog" type="button">关闭</button>
+        </header>
+        <div class="dialog-body">
+          <div id="purchaseDetail"></div>
+          <label>
+            项目说明
+            <textarea id="projectBrief" placeholder="写清楚客户项目、文件数量、交付场景和希望解决的问题。"></textarea>
+          </label>
+          <label>
+            联系方式
+            <input id="purchaseContact" placeholder="微信/手机号" />
+          </label>
+        </div>
+        <footer>
+          <button class="btn ghost" id="cancelPurchase" type="button">取消</button>
+          <button class="btn primary" id="confirmPurchase" type="button">确认购买</button>
+        </footer>
+      </section>
+    </div>
+
+    <script src="./auth-guard.js"></script>
+    <script src="./commerce.js"></script>
+  </body>
+</html>
