@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ProofAI 信证 AI | AI 内容商用证据包</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">ProofAI 信证 AI</p>
+        <h1>AI 内容商用证据包</h1>
+      </div>
+      <div class="top-actions">
+        <span id="currentUserName" style="font-weight:800;color:var(--teal);margin-right:8px;"></span>
+        <span id="authModeLabel" style="display:none;font-size:11px;color:var(--coral);margin-right:8px;"></span>
+        <a class="secondary" href="./services.html">服务中心</a>
+        <a class="secondary" href="./recharge.html">充值/订单</a>
+        <a class="secondary" href="./admin.html">后台</a>
+        <button class="ghost" onclick="window.ProofAuth&&window.ProofAuth.logout()" type="button">退出</button>
+        <button class="ghost" id="resetDemo" type="button">清空</button>
+        <button class="secondary" id="downloadJson" type="button">导出数据</button>
+        <button class="secondary" id="downloadHtml" type="button">导出证据包</button>
+        <button class="primary" id="printReport" type="button">打印/PDF</button>
+      </div>
+    </header>
+
+    <main class="workspace">
+      <form class="builder" id="evidenceForm">
+        <section class="panel hero-panel">
+          <div class="seal" aria-hidden="true">
+            <span></span>
+          </div>
+          <div>
+            <p class="panel-kicker">本地计算文件指纹</p>
+            <h2>登记项目、素材、授权与交付记录</h2>
+            <p class="panel-note">文件不会上传，哈希在浏览器内生成。适合先做客户演示和人工交付。</p>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="section-head">
+            <h2>项目基本信息</h2>
+            <span class="pill" id="evidenceIdText"></span>
+          </div>
+          <div class="grid two">
+            <label>
+              项目名称
+              <input id="projectName" name="projectName" value="某品牌 AIGC 春季海报交付" />
+            </label>
+            <label>
+              客户名称
+              <input id="clientName" name="clientName" value="北京某消费品牌" />
+            </label>
+            <label>
+              服务团队
+              <input id="providerName" name="providerName" value="ProofAI 试点团队" />
+            </label>
+            <label>
+              项目负责人
+              <input id="ownerName" name="ownerName" value="项目经理" />
+            </label>
+            <label>
+              联系方式
+              <input id="contact" name="contact" value="微信/手机号" />
+            </label>
+            <label>
+              合同/订单编号
+              <input id="contractId" name="contractId" value="POC-2026-001" />
+            </label>
+            <label>
+              交付日期
+              <input id="deliveryDate" name="deliveryDate" type="date" />
+            </label>
+            <label>
+              验真链接前缀
+              <input id="verifyBase" name="verifyBase" value="https://verify.proofai.cn/e/" />
+            </label>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="section-head">
+            <h2>作品文件</h2>
+            <label class="file-button">
+              添加文件
+              <input id="fileInput" type="file" multiple />
+            </label>
+          </div>
+          <div class="file-drop" id="fileDrop">
+            <strong>拖入或选择图片、视频、文案、设计稿</strong>
+            <span>系统会生成 SHA-256 文件指纹，用于后续验真。</span>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>文件名</th>
+                  <th>大小</th>
+                  <th>用途</th>
+                  <th>版本</th>
+                  <th>文件指纹</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="fileRows"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="section-head">
+            <h2>创作与 AI 生成说明</h2>
+          </div>
+          <div class="grid two">
+            <label>
+              是否使用 AI
+              <select id="aiUsed" name="aiUsed">
+                <option>是</option>
+                <option>否</option>
+                <option>部分使用</option>
+              </select>
+            </label>
+            <label>
+              使用工具
+              <input id="aiTools" name="aiTools" value="Midjourney / 即梦 / 通义万相 / ChatGPT" />
+            </label>
+            <label class="span-two">
+              生成说明
+              <textarea id="promptSummary" name="promptSummary">根据品牌调性生成视觉方向，人工筛选后进行二次排版与文案调整。</textarea>
+            </label>
+            <label class="span-two">
+              人工修改说明
+              <textarea id="manualEdits" name="manualEdits">调整构图、字体、配色、品牌露出和最终交付尺寸。</textarea>
+            </label>
+            <label>
+              内容创作人
+              <input id="creatorName" name="creatorName" value="设计师/内容团队" />
+            </label>
+            <label>
+              最终确认人
+              <input id="finalApprover" name="finalApprover" value="客户项目负责人" />
+            </label>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="section-head">
+            <h2>素材来源与授权证明</h2>
+            <button class="secondary small" id="addMaterial" type="button">新增素材</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>素材名称</th>
+                  <th>来源</th>
+                  <th>授权方式</th>
+                  <th>使用位置</th>
+                  <th>证明材料</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="materialRows"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="section-head">
+            <h2>授权范围</h2>
+          </div>
+          <div class="grid three">
+            <label>
+              是否允许商用
+              <select id="commercialUse" name="commercialUse">
+                <option>允许商用</option>
+                <option>仅内部使用</option>
+                <option>待确认</option>
+              </select>
+            </label>
+            <label>
+              使用平台
+              <input id="platforms" name="platforms" value="小红书、抖音、微信、官网" />
+            </label>
+            <label>
+              使用地域
+              <input id="region" name="region" value="中国大陆" />
+            </label>
+            <label>
+              使用期限
+              <input id="licensePeriod" name="licensePeriod" value="2026-07-09 至 2027-07-08" />
+            </label>
+            <label>
+              是否允许二次修改
+              <select id="derivativeAllowed" name="derivativeAllowed">
+                <option>允许</option>
+                <option>不允许</option>
+                <option>需另行确认</option>
+              </select>
+            </label>
+            <label>
+              是否允许转授权
+              <select id="sublicenseAllowed" name="sublicenseAllowed">
+                <option>不允许</option>
+                <option>允许</option>
+                <option>需另行确认</option>
+              </select>
+            </label>
+            <label class="span-three">
+              主要限制
+              <textarea id="restrictions" name="restrictions">不得用于违法违规内容、不得超出合同约定品牌项目、不得移除署名或授权证明。</textarea>
+            </label>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="section-head">
+            <h2>修改与交付记录</h2>
+            <button class="secondary small" id="addChange" type="button">新增记录</button>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>时间</th>
+                  <th>修改人</th>
+                  <th>修改内容</th>
+                  <th>版本</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="changeRows"></tbody>
+            </table>
+          </div>
+          <div class="grid two delivery-grid">
+            <label>
+              交付方式
+              <input id="deliveryMethod" name="deliveryMethod" value="企业微信/网盘链接/邮件" />
+            </label>
+            <label>
+              交付对象
+              <input id="deliveryTarget" name="deliveryTarget" value="客户项目负责人" />
+            </label>
+            <label>
+              验收状态
+              <select id="acceptanceStatus" name="acceptanceStatus">
+                <option>待验收</option>
+                <option>已验收</option>
+                <option>需修改</option>
+              </select>
+            </label>
+            <label>
+              交付凭证
+              <input id="deliveryProof" name="deliveryProof" value="聊天截图/邮件记录/网盘记录" />
+            </label>
+          </div>
+        </section>
+      </form>
+
+      <aside class="report-shell">
+        <div class="report-toolbar">
+          <div>
+            <p class="panel-kicker">实时预览</p>
+            <h2>证据包</h2>
+          </div>
+          <button class="ghost small" id="copySummary" type="button">复制摘要</button>
+        </div>
+        <article class="report" id="reportPreview"></article>
+      </aside>
+    </main>
+
+    <template id="materialTemplate">
+      <tr>
+        <td><input data-field="name" value="品牌字体/图库图片/AI 生成图" /></td>
+        <td>
+          <select data-field="source">
+            <option>自有素材</option>
+            <option>客户提供</option>
+            <option>图库/字体库</option>
+            <option>AI 生成</option>
+            <option>第三方授权</option>
+            <option>待确认</option>
+          </select>
+        </td>
+        <td><input data-field="license" value="购买授权/合同授权/平台条款" /></td>
+        <td><input data-field="usage" value="主视觉/文案/背景/音乐" /></td>
+        <td><input data-field="proof" value="订单截图/授权页/合同附件" /></td>
+        <td><button class="icon danger" data-remove type="button">删除</button></td>
+      </tr>
+    </template>
+
+    <template id="changeTemplate">
+      <tr>
+        <td><input data-field="time" type="datetime-local" /></td>
+        <td><input data-field="owner" value="设计师" /></td>
+        <td><input data-field="content" value="根据客户反馈调整画面与文案" /></td>
+        <td><input data-field="version" value="v1.1" /></td>
+        <td><button class="icon danger" data-remove type="button">删除</button></td>
+      </tr>
+    </template>
+
+    <script src="./auth-guard.js"></script>
+    <script src="./app.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", async () => {
+        await window.ProofAuth.requireAuth();
+        const user = await window.ProofAuth.getCurrentUser();
+        if (user) {
+          const el = document.querySelector("#currentUserName");
+          if (el) el.textContent = user.name || user.email;
+          if (window.ProofAuth.isStandaloneMode()) {
+            const mode = document.querySelector("#authModeLabel");
+            if (mode) { mode.textContent = "离线模式"; mode.style.display = ""; }
+          }
+        }
+      });
+    </script>
+  </body>
+</html>
