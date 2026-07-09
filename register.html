@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ProofAI 注册</title>
+    <link rel="stylesheet" href="./commerce.css" />
+  </head>
+  <body data-page="register">
+    <header class="appbar">
+      <a class="brand" href="./index.html">
+        <span>ProofAI 信证 AI</span>
+        <strong>注册</strong>
+      </a>
+      <nav class="nav" aria-label="主导航">
+        <a href="./index.html">证据包工具</a>
+        <a href="./services.html">服务中心</a>
+        <a href="./recharge.html">充值/订单</a>
+        <a href="./login.html">登录</a>
+        <a class="active" href="./register.html">注册</a>
+        <a href="./admin.html">管理后台</a>
+      </nav>
+    </header>
+
+    <main class="page auth-page">
+      <section class="panel auth-card">
+        <p class="kicker">Create Account</p>
+        <h1>注册 ProofAI 账户</h1>
+        <p class="note">注册后即可充值、购买证据包服务并保留订单记录。</p>
+        <form id="registerForm" class="auth-form">
+          <label>
+            姓名/团队名
+            <input name="name" autocomplete="name" required />
+          </label>
+          <label>
+            邮箱
+            <input name="email" type="email" autocomplete="email" required />
+          </label>
+          <label>
+            手机/微信
+            <input name="phone" autocomplete="tel" />
+          </label>
+          <label>
+            密码
+            <input name="password" type="password" autocomplete="new-password" minlength="8" required />
+          </label>
+          <button class="btn primary" type="submit">注册并登录</button>
+        </form>
+        <div id="authMessage" class="note"></div>
+      </section>
+    </main>
+
+    <script src="./auth-guard.js"></script>
+    <script src="./auth.js"></script>
+  </body>
+</html>
